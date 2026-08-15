@@ -13,7 +13,7 @@ class JwtUtilsTest {
 
     @BeforeEach
     void setUp() {
-        jwtUtils = new JwtUtils();
+        jwtUtils = new JwtUtils("lZD9iHwp8Uy2gwwkEyV5s0mZRjhwZlu3TCZkMQPFsSs=");
     }
 
     @Test

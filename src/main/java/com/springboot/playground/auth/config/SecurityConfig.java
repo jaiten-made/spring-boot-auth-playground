@@ -1,5 +1,6 @@
 package com.springboot.playground.auth.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +24,8 @@ import java.nio.charset.StandardCharsets;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final String SECRET_STRING = "lZD9iHwp8Uy2gwwkEyV5s0mZRjhwZlu3TCZkMQPFsSs=";
+    @Value("${app.jwt.secret}")
+    private String secretString;
 
     // 1. Define PasswordEncoder bean (using BCrypt for strong industry standard hashing)
     @Bean
@@ -41,7 +43,7 @@ public class SecurityConfig {
     @Bean
     public JwtDecoder jwtDecoder() {
         SecretKeySpec secretKey = new SecretKeySpec(
-                SECRET_STRING.getBytes(StandardCharsets.UTF_8), 
+                secretString.getBytes(StandardCharsets.UTF_8), 
                 "HmacSHA256"
         );
         return NimbusJwtDecoder.withSecretKey(secretKey).build();

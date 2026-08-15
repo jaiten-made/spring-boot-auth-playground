@@ -3,6 +3,7 @@ package com.springboot.playground.auth.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -13,9 +14,11 @@ import java.util.function.Function;
 @Component
 public class JwtUtils {
 
-    // A secure 256-bit key for local testing. In production, this should be injected from secure config.
-    private static final String SECRET_STRING = "lZD9iHwp8Uy2gwwkEyV5s0mZRjhwZlu3TCZkMQPFsSs=";
-    private final SecretKey key = Keys.hmacShaKeyFor(SECRET_STRING.getBytes(StandardCharsets.UTF_8));
+    private final SecretKey key;
+
+    public JwtUtils(@Value("${app.jwt.secret}") String secretString) {
+        this.key = Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
+    }
     
     // Token valid for 1 hour (3,600,000 milliseconds)
     private static final long EXPIRATION_TIME = 3600000;
