@@ -1,10 +1,9 @@
 package com.springboot.playground.auth.config;
 
-import com.springboot.playground.auth.jwt.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,14 +13,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private static final String SECRET_STRING = "lZD9iHwp8Uy2gwwkEyV5s0mZRjhwZlu3TCZkMQPFsSs=";
 
     // 1. Define PasswordEncoder bean (using BCrypt for strong industry standard hashing)
     @Bean
@@ -35,7 +37,17 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // 3. Configure SecurityFilterChain
+    // 3. Define JwtDecoder bean using HMAC secret key
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        SecretKeySpec secretKey = new SecretKeySpec(
+                SECRET_STRING.getBytes(StandardCharsets.UTF_8), 
+                "HmacSHA256"
+        );
+        return NimbusJwtDecoder.withSecretKey(secretKey).build();
+    }
+
+    // 4. Configure SecurityFilterChain
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -59,8 +71,8 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             
-            // Add our custom JWT filter before the standard username-password filter
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            // Enable built-in OAuth2 JWT resource server support
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         return http.build();
     }

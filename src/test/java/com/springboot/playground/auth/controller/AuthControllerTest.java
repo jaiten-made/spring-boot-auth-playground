@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import com.springboot.playground.auth.config.SecurityConfig;
-import com.springboot.playground.auth.jwt.JwtAuthenticationFilter;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,19 +34,9 @@ class AuthControllerTest {
     @MockitoBean
     private org.springframework.boot.h2console.autoconfigure.H2ConsoleProperties h2ConsoleProperties;
 
-    @MockitoBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @BeforeEach
     void setUp() throws Exception {
         when(h2ConsoleProperties.getPath()).thenReturn("/h2-console");
-        doAnswer(invocation -> {
-            ServletRequest request = invocation.getArgument(0);
-            ServletResponse response = invocation.getArgument(1);
-            FilterChain chain = invocation.getArgument(2);
-            chain.doFilter(request, response);
-            return null;
-        }).when(jwtAuthenticationFilter).doFilter(any(ServletRequest.class), any(ServletResponse.class), any(FilterChain.class));
     }
 
     @Autowired
@@ -104,6 +93,6 @@ class AuthControllerTest {
     @Test
     void testPrivateEndpoint_UnauthorizedWithoutToken() throws Exception {
         mockMvc.perform(get("/api/v1/auth/private-data"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 }

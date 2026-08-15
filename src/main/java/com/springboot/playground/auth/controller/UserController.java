@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/users")
 @Tag(name = "User Management", description = "Endpoints for user management and registration")
 public class UserController {
 
@@ -31,7 +31,7 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostMapping("/users")
+    @PostMapping
     @Operation(summary = "Register a new user", description = "Creates a new user account with USER role")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "User registered successfully",

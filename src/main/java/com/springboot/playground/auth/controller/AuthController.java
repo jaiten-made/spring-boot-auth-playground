@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/auth")
 @Tag(name = "Authentication", description = "Endpoints for user authentication, registration, and session checking")
 public class AuthController {
 
@@ -35,7 +35,7 @@ public class AuthController {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     @Operation(summary = "Authenticate user and get JWT", description = "Authenticates user credentials and returns a Bearer JWT token if successful")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successful authentication, returns JWT token", 
@@ -66,7 +66,7 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/auth/public-data")
+    @GetMapping("/public-data")
     @Operation(summary = "Access public endpoint", description = "An endpoint accessible by anyone without authentication")
     @ApiResponse(responseCode = "200", description = "Successfully fetched public data",
                  content = @Content(schema = @Schema(implementation = MessageResponse.class)))
@@ -77,7 +77,7 @@ public class AuthController {
         ));
     }
 
-    @GetMapping("/auth/private-data")
+    @GetMapping("/private-data")
     @Operation(summary = "Access private endpoint", description = "A secured endpoint that requires a valid JWT Bearer token")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully accessed private endpoint (JWT valid)",
