@@ -51,7 +51,10 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Allow public access to home page, console UI, login/register endpoints, public endpoint, and H2 console
                 .requestMatchers(PathRequest.toH2Console()).permitAll()
-                .requestMatchers("/", "/index.html", "/api/auth/login", "/api/auth/register", "/api/auth/public", "/css/**", "/js/**").permitAll()
+                .requestMatchers(
+                    "/", "/index.html", "/api/auth/login", "/api/auth/register", "/api/auth/public", "/css/**", "/js/**",
+                    "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**"
+                ).permitAll()
                 // All other requests (such as /api/auth/private) require authentication
                 .anyRequest().authenticated()
             )

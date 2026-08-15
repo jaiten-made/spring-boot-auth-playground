@@ -6,6 +6,9 @@ A playground project demonstrating JWT authentication and role-based access cont
 
 - **JWT Auth**: Bearer token generation and validation using custom filter.
 - **H2 Database**: In-memory database with H2 Console enabled.
+- **Swagger/OpenAPI**: Interactive UI sandbox to test endpoints.
+  - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+  - OpenAPI Docs: `http://localhost:8080/v3/api-docs`
 - **REST Endpoints**:
   - `POST /api/auth/register` - Create a new user.
   - `POST /api/auth/login` - Authenticate credentials and get JWT token.
