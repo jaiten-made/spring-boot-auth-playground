@@ -1,4 +1,4 @@
-package com.springboot.auth;
+package com.springboot.playground.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

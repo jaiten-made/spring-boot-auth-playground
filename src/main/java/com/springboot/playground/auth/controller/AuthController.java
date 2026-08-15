@@ -1,8 +1,8 @@
-package com.springboot.auth.controller;
+package com.springboot.playground.auth.controller;
 
-import com.springboot.auth.jwt.JwtUtils;
-import com.springboot.auth.repository.UserRepository;
-import com.springboot.auth.model.User;
+import com.springboot.playground.auth.jwt.JwtUtils;
+import com.springboot.playground.auth.repository.UserRepository;
+import com.springboot.playground.auth.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

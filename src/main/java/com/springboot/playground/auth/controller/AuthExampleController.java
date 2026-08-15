@@ -1,4 +1,4 @@
-package com.springboot.auth.controller;
+package com.springboot.playground.auth.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

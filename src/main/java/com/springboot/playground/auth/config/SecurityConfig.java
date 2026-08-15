@@ -1,6 +1,6 @@
-package com.springboot.auth.config;
+package com.springboot.playground.auth.config;
 
-import com.springboot.auth.jwt.JwtAuthenticationFilter;
+import com.springboot.playground.auth.jwt.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

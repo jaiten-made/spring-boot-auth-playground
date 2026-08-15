@@ -1,7 +1,7 @@
-package com.springboot.auth.service;
+package com.springboot.playground.auth.service;
 
-import com.springboot.auth.repository.UserRepository;
-import com.springboot.auth.model.User;
+import com.springboot.playground.auth.repository.UserRepository;
+import com.springboot.playground.auth.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,4 +1,4 @@
-package com.springboot.auth.model;
+package com.springboot.playground.auth.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

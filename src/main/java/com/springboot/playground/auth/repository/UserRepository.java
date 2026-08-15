@@ -1,6 +1,6 @@
-package com.springboot.auth.repository;
+package com.springboot.playground.auth.repository;
 
-import com.springboot.auth.model.User;
+import com.springboot.playground.auth.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package com.springboot.auth.jwt;
+package com.springboot.playground.auth.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
