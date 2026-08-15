@@ -53,4 +53,48 @@ class JwtUtilsTest {
         assertNotNull(expiration);
         assertTrue(expiration.after(new Date()));
     }
+
+    @Test
+    void testValidateToken_ExpiredTokenThrowsException() {
+        // Create an expired token manually using jjwt
+        String username = "testuser";
+        Date now = new Date();
+        Date expiredDate = new Date(now.getTime() - 10000); // 10 seconds ago
+
+        String expiredToken = io.jsonwebtoken.Jwts.builder()
+                .subject(username)
+                .issuedAt(expiredDate)
+                .expiration(expiredDate)
+                .signWith(io.jsonwebtoken.security.Keys.hmacShaKeyFor("lZD9iHwp8Uy2gwwkEyV5s0mZRjhwZlu3TCZkMQPFsSs=".getBytes(java.nio.charset.StandardCharsets.UTF_8)))
+                .compact();
+
+        assertThrows(io.jsonwebtoken.ExpiredJwtException.class, () -> {
+            jwtUtils.validateToken(expiredToken, username);
+        });
+    }
+
+    @Test
+    void testValidateToken_InvalidSignatureThrowsException() {
+        String username = "testuser";
+        // Sign with a different key
+        String tokenWithDifferentKey = io.jsonwebtoken.Jwts.builder()
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 60000))
+                .signWith(io.jsonwebtoken.security.Keys.hmacShaKeyFor("differentKeySecurityTokenPlaceholder12345!".getBytes(java.nio.charset.StandardCharsets.UTF_8)))
+                .compact();
+
+        assertThrows(io.jsonwebtoken.security.SignatureException.class, () -> {
+            jwtUtils.validateToken(tokenWithDifferentKey, username);
+        });
+    }
+
+    @Test
+    void testValidateToken_MalformedTokenThrowsException() {
+        String malformedToken = "not.a.valid.jwt";
+
+        assertThrows(io.jsonwebtoken.MalformedJwtException.class, () -> {
+            jwtUtils.validateToken(malformedToken, "testuser");
+        });
+    }
 }
