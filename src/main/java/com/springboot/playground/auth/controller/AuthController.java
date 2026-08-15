@@ -1,5 +1,7 @@
 package com.springboot.playground.auth.controller;
 
+import com.springboot.playground.auth.dto.LoginRequest;
+import com.springboot.playground.auth.dto.RegisterRequest;
 import com.springboot.playground.auth.jwt.JwtUtils;
 import com.springboot.playground.auth.repository.UserRepository;
 import com.springboot.playground.auth.model.User;
@@ -98,53 +100,5 @@ public class AuthController {
         response.put("status", "success");
         response.put("message", "This is a SECURED endpoint. Your Bearer JWT token was successfully validated!");
         return response;
-    }
-
-    // Static DTO for receiving login requests
-    public static class LoginRequest {
-        private String username;
-        private String password;
-
-        public LoginRequest() {}
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-    }
-
-    // Static DTO for receiving registration requests
-    public static class RegisterRequest {
-        private String username;
-        private String password;
-
-        public RegisterRequest() {}
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
     }
 }

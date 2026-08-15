@@ -1,5 +1,6 @@
 package com.springboot.playground.auth.controller;
 
+import com.springboot.playground.auth.dto.LoginRequest;
 import tools.jackson.databind.ObjectMapper;
 import com.springboot.playground.auth.jwt.JwtUtils;
 import com.springboot.playground.auth.repository.UserRepository;
@@ -79,7 +80,7 @@ class AuthControllerTest {
 
     @Test
     void testLogin_Success() throws Exception {
-        AuthController.LoginRequest request = new AuthController.LoginRequest();
+        LoginRequest request = new LoginRequest();
         request.setUsername("testuser");
         request.setPassword("password");
 
@@ -99,7 +100,7 @@ class AuthControllerTest {
 
     @Test
     void testLogin_Failure_InvalidCredentials() throws Exception {
-        AuthController.LoginRequest request = new AuthController.LoginRequest();
+        LoginRequest request = new LoginRequest();
         request.setUsername("testuser");
         request.setPassword("wrongpassword");
 
