@@ -1,12 +1,9 @@
 package com.springboot.playground.auth.controller;
 
 import com.springboot.playground.auth.dto.LoginRequest;
-import com.springboot.playground.auth.dto.RegisterRequest;
 import com.springboot.playground.auth.dto.LoginResponse;
 import com.springboot.playground.auth.dto.MessageResponse;
 import com.springboot.playground.auth.jwt.JwtUtils;
-import com.springboot.playground.auth.repository.UserRepository;
-import com.springboot.playground.auth.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,12 +34,6 @@ public class AuthController {
 
     @Autowired
     private JwtUtils jwtUtils;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/auth/login")
     @Operation(summary = "Authenticate user and get JWT", description = "Authenticates user credentials and returns a Bearer JWT token if successful")
@@ -74,29 +64,6 @@ public class AuthController {
             // Credentials incorrect or account locked
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication failed: " + e.getMessage(), e);
         }
-    }
-
-    @PostMapping("/users")
-    @Operation(summary = "Register a new user", description = "Creates a new user account with USER role")
-    @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "User registered successfully",
-                     content = @Content(schema = @Schema(implementation = MessageResponse.class))),
-        @ApiResponse(responseCode = "400", description = "Username already taken")
-    })
-    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
-        if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already taken");
-        }
-
-        User newUser = new User(
-                registerRequest.getUsername(),
-                passwordEncoder.encode(registerRequest.getPassword()),
-                "USER"
-        );
-        userRepository.save(newUser);
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new MessageResponse("success", "User registered successfully!"));
     }
 
     @GetMapping("/auth/public-data")
