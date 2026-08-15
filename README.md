@@ -10,10 +10,10 @@ A playground project demonstrating JWT authentication and role-based access cont
   - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
   - OpenAPI Docs: `http://localhost:8080/v3/api-docs`
 - **REST Endpoints**:
-  - `POST /api/auth/register` - Create a new user.
-  - `POST /api/auth/login` - Authenticate credentials and get JWT token.
-  - `GET /api/auth/public` - Public endpoint.
-  - `GET /api/auth/private` - Secured endpoint requiring valid JWT.
+  - `POST /api/v1/users` - Create a new user.
+  - `POST /api/v1/auth/login` - Authenticate credentials and get JWT token.
+  - `GET /api/v1/auth/public-data` - Public endpoint.
+  - `GET /api/v1/auth/private-data` - Secured endpoint requiring valid JWT.
 
 ## Setup & Running
 
