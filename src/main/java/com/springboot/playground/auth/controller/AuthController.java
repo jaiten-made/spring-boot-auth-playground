@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -81,6 +82,22 @@ public class AuthController {
         responseBody.put("message", "User registered successfully!");
 
         return ResponseEntity.ok(responseBody);
+    }
+
+    @GetMapping("/api/auth/public")
+    public Map<String, String> getPublicData() {
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", "This is a PUBLIC endpoint. Anyone can access this without a JWT token!");
+        return response;
+    }
+
+    @GetMapping("/api/auth/private")
+    public Map<String, String> getSecuredData() {
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("message", "This is a SECURED endpoint. Your Bearer JWT token was successfully validated!");
+        return response;
     }
 
     // Static DTO for receiving login requests

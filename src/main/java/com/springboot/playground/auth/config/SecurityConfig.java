@@ -51,8 +51,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Allow public access to home page, console UI, login/register endpoints, public endpoint, and H2 console
                 .requestMatchers(PathRequest.toH2Console()).permitAll()
-                .requestMatchers("/", "/index.html", "/api/auth/login", "/api/auth/register", "/api/public", "/css/**", "/js/**").permitAll()
-                // All other requests (such as /api/secured) require authentication
+                .requestMatchers("/", "/index.html", "/api/auth/login", "/api/auth/register", "/api/auth/public", "/css/**", "/js/**").permitAll()
+                // All other requests (such as /api/auth/private) require authentication
                 .anyRequest().authenticated()
             )
             
