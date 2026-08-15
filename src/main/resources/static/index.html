@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Security Auth Console</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1f2937;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --border-color: #374151;
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: 'JetBrains Mono', source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+        }
+
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        header h1 span {
+            color: var(--accent-color);
+        }
+
+        .status-badge {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--error-color);
+            transition: background-color 0.3s ease;
+        }
+
+        .status-dot.active {
+            background-color: var(--success-color);
+            box-shadow: 0 0 8px var(--success-color);
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 968px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        input {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease, outline 0.2s ease;
+            width: 100%;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            border: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+
+        .btn-danger {
+            background-color: transparent;
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        .btn-danger:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .token-display {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            min-height: 120px;
+            max-height: 160px;
+            overflow-y: auto;
+            word-break: break-all;
+            white-space: pre-wrap;
+            color: var(--text-secondary);
+        }
+
+        .token-display.has-token {
+            color: var(--success-color);
+        }
+
+        .console-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            min-height: 350px;
+        }
+
+        .console-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .console-output {
+            flex: 1;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            color: #10b981; /* Default console green */
+            max-height: 450px;
+        }
+
+        footer {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Spring Security <span>Auth Console</span></h1>
+        <div class="status-badge">
+            <div id="statusDot" class="status-dot"></div>
+            <span id="statusText">Session: Unauthorized</span>
+        </div>
+    </header>
+
+    <main>
+        <!-- Authentication Panel -->
+        <div class="card">
+            <div class="auth-tabs" style="display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem;">
+                <button type="button" id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')" style="flex: 1; background: none; border: none; border-bottom: 2px solid var(--accent-color); color: var(--text-primary); border-radius: 0; padding: 0.75rem; font-weight: 600; cursor: pointer;">Login</button>
+                <button type="button" id="tab-register" class="auth-tab" onclick="switchAuthTab('register')" style="flex: 1; background: none; border: none; border-bottom: 2px solid transparent; color: var(--text-secondary); border-radius: 0; padding: 0.75rem; font-weight: 600; cursor: pointer;">Register</button>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required autocomplete="username">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required autocomplete="current-password">
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn-primary">Request JWT Token</button>
+                    <button type="button" class="btn-danger" onclick="clearToken()">Clear Client Session</button>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" onsubmit="handleRegister(event)" style="display: none;">
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" placeholder="Choose a username" required autocomplete="username">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" placeholder="Choose a password" required autocomplete="new-password">
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn-primary">Register Account</button>
+                </div>
+            </form>
+
+            <div class="form-group" style="margin-top: 1rem;">
+                <label>Active JWT Token (Stored in LocalStorage)</label>
+                <div id="tokenDisplay" class="token-display">No token stored.</div>
+            </div>
+        </div>
+
+        <!-- API Testing Suite -->
+        <div class="card">
+            <div class="card-title">Resource Server API Test Suite</div>
+            
+            <div class="btn-group">
+                <button type="button" class="btn-secondary" onclick="callApi('/api/public', false)">
+                    Call Public API
+                </button>
+                <button type="button" class="btn-primary" onclick="callApi('/api/secured', true)">
+                    Call Secured API (Bearer Token)
+                </button>
+            </div>
+
+            <div class="console-container">
+                <div class="console-header">
+                    <label>HTTP Response Console</label>
+                    <button type="button" class="btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;" onclick="clearConsole()">
+                        Clear Output
+                    </button>
+                </div>
+                <div id="consoleOutput" class="console-output">Console ready. Click an API trigger above.</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const TOKEN_KEY = 'jwt_auth_token';
+
+        // Initial setup
+        window.addEventListener('load', () => {
+            updateSessionStatus();
+        });
+
+        // Update token state in UI
+        function updateSessionStatus() {
+            const token = localStorage.getItem(TOKEN_KEY);
+            const tokenDisplay = document.getElementById('tokenDisplay');
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+
+            if (token) {
+                tokenDisplay.textContent = token;
+                tokenDisplay.classList.add('has-token');
+                statusDot.classList.add('active');
+                
+                // Simple JWT decoder to display payload info
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    statusText.textContent = `Active Session: ${payload.sub || 'User'}`;
+                } catch (e) {
+                    statusText.textContent = "Active Session: Authenticated";
+                }
+            } else {
+                tokenDisplay.textContent = "No token stored.";
+                tokenDisplay.classList.remove('has-token');
+                statusDot.classList.remove('active');
+                statusText.textContent = "Session: Unauthorized";
+            }
+        }
+
+        // Switch authentication tabs (Login / Register)
+        function switchAuthTab(tab) {
+            const loginTab = document.getElementById('tab-login');
+            const registerTab = document.getElementById('tab-register');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+
+            if (tab === 'login') {
+                loginTab.classList.add('active');
+                loginTab.style.borderBottomColor = 'var(--accent-color)';
+                loginTab.style.color = 'var(--text-primary)';
+                
+                registerTab.classList.remove('active');
+                registerTab.style.borderBottomColor = 'transparent';
+                registerTab.style.color = 'var(--text-secondary)';
+                
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            } else {
+                registerTab.classList.add('active');
+                registerTab.style.borderBottomColor = 'var(--accent-color)';
+                registerTab.style.color = 'var(--text-primary)';
+                
+                loginTab.classList.remove('active');
+                loginTab.style.borderBottomColor = 'transparent';
+                loginTab.style.color = 'var(--text-secondary)';
+                
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            }
+        }
+
+        // Handle Register Submission
+        async function handleRegister(event) {
+            event.preventDefault();
+            const usernameInput = document.getElementById('reg-username').value;
+            const passwordInput = document.getElementById('reg-password').value;
+
+            logToConsole(`Sending registration request for username: [${usernameInput}] ...`);
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: usernameInput,
+                        password: passwordInput
+                    })
+                });
+
+                const status = response.status;
+                const statusText = response.statusText;
+                
+                logToConsole(`POST /api/auth/register -> HTTP ${status} ${statusText}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    logToConsole(`Registration Successful: ${data.message || 'User registered successfully!'}`);
+                    // Automatically switch to login tab and fill username
+                    switchAuthTab('login');
+                    document.getElementById('username').value = usernameInput;
+                    document.getElementById('password').value = '';
+                    document.getElementById('password').focus();
+                } else {
+                    const errorText = await response.text();
+                    logToConsole(`Registration Failed: ${errorText || 'Failed to register'}`);
+                }
+            } catch (error) {
+                logToConsole(`Network Error: ${error.message}`);
+            }
+        }
+
+        // Handle Login Submission
+        async function handleLogin(event) {
+            event.preventDefault();
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+
+            logToConsole(`Requesting authentication for user: [${usernameInput}] ...`);
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: usernameInput,
+                        password: passwordInput
+                    })
+                });
+
+                const status = response.status;
+                const statusText = response.statusText;
+                
+                logToConsole(`POST /api/auth/login -> HTTP ${status} ${statusText}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.token) {
+                        localStorage.setItem(TOKEN_KEY, data.token);
+                        logToConsole(`Authentication Successful!\nReceived JWT token: ${data.token.substring(0, 20)}...`);
+                        updateSessionStatus();
+                    } else {
+                        logToConsole(`Error: Response succeeded but did not return a 'token' property.`);
+                    }
+                } else {
+                    const errorText = await response.text();
+                    logToConsole(`Authentication Failed: ${errorText || 'Invalid credentials'}`);
+                }
+            } catch (error) {
+                logToConsole(`Network Error: ${error.message}`);
+            }
+        }
+
+        // Clear active token
+        function clearToken() {
+            localStorage.removeItem(TOKEN_KEY);
+            updateSessionStatus();
+            logToConsole("Client session cleared. Token removed from LocalStorage.");
+        }
+
+        // Clear console log
+        function clearConsole() {
+            document.getElementById('consoleOutput').textContent = "";
+        }
+
+        // Print details to screen console
+        function logToConsole(message) {
+            const consoleOutput = document.getElementById('consoleOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            consoleOutput.textContent += `\n[${timestamp}] ${message}`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        // Call an endpoint
+        async function callApi(endpoint, secure) {
+            logToConsole(`Calling ${endpoint} (Secure request: ${secure}) ...`);
+            
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            if (secure) {
+                const token = localStorage.getItem(TOKEN_KEY);
+                if (!token) {
+                    logToConsole(`Warning: No JWT token found in local storage. Sending request without Authorization header.`);
+                } else {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+            }
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'GET',
+                    headers: headers
+                });
+
+                const status = response.status;
+                const statusText = response.statusText;
+                
+                logToConsole(`GET ${endpoint} -> HTTP ${status} ${statusText}`);
+
+                // Log response headers
+                let headerLogs = "Headers:\n";
+                response.headers.forEach((val, key) => {
+                    headerLogs += `  ${key}: ${val}\n`;
+                });
+                logToConsole(headerLogs.trim());
+
+                if (response.ok) {
+                    const data = await response.json();
+                    logToConsole(`Payload Response:\n${JSON.stringify(data, null, 2)}`);
+                } else {
+                    const err = await response.text();
+                    logToConsole(`Error Response body:\n${err || '[Empty Body]'}`);
+                }
+            } catch (error) {
+                logToConsole(`Network Error: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
